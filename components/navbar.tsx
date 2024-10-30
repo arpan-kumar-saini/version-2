@@ -109,7 +109,7 @@ export  default function NavbarComponent() {
                   </DropdownMenuItem>
                   <DropdownMenuItem className="flex items-center space-x-2 p-2 hover:bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 rounded-md transition-colors duration-200">
                     <BookOpen className="h-4 w-4" />
-                    <span>My Courses</span>
+                    <span>Mental well-being Score</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="flex items-center space-x-2 p-2 hover:bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 rounded-md transition-colors duration-200">
                     <CreditCard className="h-4 w-4" />
