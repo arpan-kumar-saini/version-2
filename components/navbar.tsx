@@ -25,9 +25,9 @@ import { Separator } from "@/components/ui/separator"
 const navItems = [
   { name: 'Home', href: '/' },
   { name: 'Chatbot', href: '/chatbot' },
-  { name: 'Docs', href: '/chatbot' },
-  { name: 'Our Team', href: '/chatbot' },
-  { name: 'Contact Us', href: '/chatbot' },
+  { name: 'Docs', href: '/docs' },
+  { name: 'Our Team', href: '/team' },
+  { name: 'Contact Us', href: '/contact' },
 ]
 
 export  default function NavbarComponent() {
