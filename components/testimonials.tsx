@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -55,12 +56,14 @@ export default function TestimonialsSectionComponent() {
               </Button>
               <div className="flex items-center space-x-4">
                 <div className="relative">
-                  <img
-                    src={testimonials[currentTestimonial].avatar}
-                    alt={testimonials[currentTestimonial].name}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-primary"
-                  />
-                  <div className="absolute -bottom-2 -right-2 bg-primary text-white rounded-full p-1">
+                <Image
+                  src={testimonials[currentTestimonial].avatar}
+                  alt={testimonials[currentTestimonial].name}
+                  width={64} // Adjust width to match `w-16`
+                  height={64} // Adjust height to match `h-16`
+                  className="rounded-full object-cover border-2 border-primary"
+                />
+                <div className="absolute -bottom-2 -right-2 bg-primary text-white rounded-full p-1">
                     <Star className="w-4 h-4 fill-current" />
                   </div>
                 </div>
@@ -74,7 +77,7 @@ export default function TestimonialsSectionComponent() {
               </Button>
             </div>
             <blockquote className="text-center italic text-lg">
-              "{testimonials[currentTestimonial].content}"
+            &quot;{testimonials[currentTestimonial].content}&quot;
             </blockquote>
             <div className="flex justify-center mt-4">
               {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (

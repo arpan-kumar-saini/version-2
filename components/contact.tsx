@@ -7,14 +7,14 @@ import { Instagram, Twitter, Mail, Send } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast"
 
 export function InteractiveContactUsComponent() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
 
-  const onSubmit = async (data) => {
+  const onSubmit = async () => {
     setIsSubmitting(true)
     // Simulating form submission
     await new Promise(resolve => setTimeout(resolve, 2000))
@@ -64,10 +64,11 @@ export function InteractiveContactUsComponent() {
                       exit={{ opacity: 0, y: -10 }}
                       className="text-red-500 text-sm mt-1"
                     >
-                      {errors.name.message}
+                      {typeof errors.name.message === "string" ? errors.name.message : ""}
                     </motion.p>
                   )}
                 </AnimatePresence>
+
               </motion.div>
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
@@ -85,7 +86,7 @@ export function InteractiveContactUsComponent() {
                   placeholder="Your email"
                   className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-300 transition"
                 />
-                <AnimatePresence>
+               <AnimatePresence>
                   {errors.email && (
                     <motion.p
                       initial={{ opacity: 0, y: -10 }}
@@ -93,10 +94,11 @@ export function InteractiveContactUsComponent() {
                       exit={{ opacity: 0, y: -10 }}
                       className="text-red-500 text-sm mt-1"
                     >
-                      {errors.email.message}
+                      {typeof errors.email.message === "string" ? errors.email.message : ""}
                     </motion.p>
                   )}
                 </AnimatePresence>
+
               </motion.div>
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
@@ -109,7 +111,7 @@ export function InteractiveContactUsComponent() {
                   className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-300 transition"
                   rows={4}
                 />
-                <AnimatePresence>
+               <AnimatePresence>
                   {errors.message && (
                     <motion.p
                       initial={{ opacity: 0, y: -10 }}
@@ -117,10 +119,11 @@ export function InteractiveContactUsComponent() {
                       exit={{ opacity: 0, y: -10 }}
                       className="text-red-500 text-sm mt-1"
                     >
-                      {errors.message.message}
+                      {typeof errors.message.message === "string" ? errors.message.message : ""}
                     </motion.p>
                   )}
                 </AnimatePresence>
+
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -153,7 +156,7 @@ export function InteractiveContactUsComponent() {
               transition={{ delay: 0.6 }}
               className="text-gray-600 text-lg"
             >
-              Your voice matters to us. Reach out anytime—we're here to help.
+              Your voice matters to us. Reach out anytime—we&apos;re here to help.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}

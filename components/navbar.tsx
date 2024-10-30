@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Menu, Heart, ChevronDown, User, Settings, HelpCircle, LogOut, Bell, CreditCard, BookOpen } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -25,13 +25,12 @@ import { Separator } from "@/components/ui/separator"
 const navItems = [
   { name: 'Home', href: '/' },
   { name: 'Chatbot', href: '/chatbot' },
-  { name: 'Docs', href: '/docs' },
-  { name: 'Our Team', href: '/team' },
-  { name: 'Contact Us', href: '/contact' },
+  { name: 'Docs', href: '/chatbot' },
+  { name: 'Our Team', href: '/chatbot' },
+  { name: 'Contact Us', href: '/chatbot' },
 ]
 
 export  default function NavbarComponent() {
-  const [isOpen, setIsOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   const pathname = usePathname()
@@ -40,7 +39,7 @@ export  default function NavbarComponent() {
     setIsMounted(true)
   }, [])
 
-  const toggleMenu = () => setIsOpen(!isOpen)
+
 
   if (!isMounted) return null
 
@@ -159,7 +158,7 @@ export  default function NavbarComponent() {
                   className="flex flex-col h-full"
                 >
                   <div className="flex items-center justify-between mb-8">
-                    <Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
+                    <Link href="/" className="flex items-center" >
                       <Heart className="h-8 w-8 text-black" />
                       <span className="ml-2 text-xl font-bold text-black">
                         HeartfulMind
@@ -176,7 +175,7 @@ export  default function NavbarComponent() {
                             ? 'text-black bg-gradient-to-br from-green-100 via-blue-100 to-purple-100'
                             : 'text-gray-700 hover:text-black hover:bg-gradient-to-br from-green-100 via-blue-100 to-purple-100'
                         } transition-colors duration-200`}
-                        onClick={() => setIsOpen(false)}
+                      
                       >
                         {item.name}
                       </Link>
@@ -233,7 +232,7 @@ export  default function NavbarComponent() {
                         className="w-full bg-black hover:bg-gray-800 text-white transition-colors duration-200"
                         onClick={() => {
                           setIsLoggedIn(true)
-                          setIsOpen(false)
+                          
                         }}
                       >
                         Login

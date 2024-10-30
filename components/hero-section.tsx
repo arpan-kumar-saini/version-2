@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Lock, Bot, ArrowRight, ChevronDown } from "lucide-react";
-import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
-import { ReactNode,useRef, useEffect, useState } from "react";
-import Link from "next/link";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { ReactNode,useRef, useEffect, useState,ButtonHTMLAttributes } from "react";
+
 
 function FloatingOrb({ delay = 0, duration = 5, size = 300, color = "rgba(147, 197, 253, 0.2)" }) {
   return (
@@ -53,22 +53,23 @@ function ParallaxText({ children, className = "" }: ParallaxTextProps) {
 
 
 
-interface InteractiveButtonProps {
+
+interface InteractiveButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  variant?: "default" | "outline" | "secondary"; // Add other variants if necessary
-  // Spread props for other Button attributes
-  [key: string]: any; // This allows for additional props without TypeScript errors
+  variant?: "default" | "outline" | "secondary"; // Other variants if needed
+  size?: "sm" | "lg"; // Add size options here
 }
 
-function InteractiveButton({ children, variant = "default", ...props }: InteractiveButtonProps) {
+function InteractiveButton({ children, variant = "default", size = "lg", ...props }: InteractiveButtonProps) {
   return (
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-      <Button variant={variant} {...props}>
+      <Button variant={variant} size={size} {...props}>
         {children}
       </Button>
     </motion.div>
   );
 }
+
 
 export default function InteractiveHero() {
   const containerRef = useRef<HTMLDivElement | null>(null); // Specify the type for the ref

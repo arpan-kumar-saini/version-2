@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Heart, Facebook, Twitter, Linkedin, ArrowUp, Send } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { toast, useToast } from "@/hooks/use-toast"
+import {  useToast } from "@/hooks/use-toast"
 
 export default function InteractiveFooter() {
   const [isVisible, setIsVisible] = useState(false)
