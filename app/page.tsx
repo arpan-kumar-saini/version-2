@@ -5,6 +5,7 @@ import Features from "@/components/features"
 import Working from "@/components/working"
 import Testimonials from "@/components/testimonials"
 import Team from "@/components/team"
+import Contact from "@/components/contact"
 
 function page() {
   return (
@@ -16,6 +17,7 @@ function page() {
     <Working/>
     <Testimonials/>
     <Team/>
+    <Contact/>
     </div>
     
     

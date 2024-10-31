@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 
-export function InteractiveContactUsComponent() {
+export default function InteractiveContactUsComponent() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
@@ -28,12 +28,12 @@ export function InteractiveContactUsComponent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 flex items-center justify-center p-4">
+    <div className="h-[700px] flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="bg-white rounded-lg shadow-lg p-8 max-w-4xl w-full"
+        className="bg-white rounded-lg shadow-lg p-8 max-w-6xl w-full bg-gradient-to-br from-green-50 via-blue-50 to-purple-50"
       >
         <motion.h1
           initial={{ y: -20 }}
