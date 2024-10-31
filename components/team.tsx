@@ -5,17 +5,7 @@ import { Github, Linkedin, Instagram} from 'lucide-react'
 
 const teamMembers = [
  
-  {
-    name: 'Ritu',
-    role: 'UI/UX Designer',
-    bio: 'Passionate about mental health and design, dedicated to creating impactful UI/UX.',
-    image: '/ritu.jpg',
-    social: {
-      instagram: 'https://instagram.com/ritu',
-      linkedin: 'https://linkedin.com/in/ritu',
-      github: 'https://github.com/ritu'
-    }
-  },
+  
   {
     name: 'Arpan',
     role: 'Lead Developer',
@@ -28,16 +18,17 @@ const teamMembers = [
     }
   },
   {
-    name: 'Akhilesh',
-    role: 'AI Specialist',
-    bio: 'AI expert focused on integrating advanced technologies to enhance user interaction.',
-    image: '/akhilesh.jpeg',
+    name: 'Ritu',
+    role: 'UI/UX Designer',
+    bio: 'Passionate about mental health and design, dedicated to creating impactful UI/UX.',
+    image: '/ritu.jpg',
     social: {
-      instagram: 'https://twitter.com/akhilesh',
-      linkedin: 'https://linkedin.com/in/akhilesh',
-      github: 'https://github.com/akhilesh'
+      instagram: 'https://instagram.com/ritu',
+      linkedin: 'https://linkedin.com/in/ritu',
+      github: 'https://github.com/ritu'
     }
   },
+
   {
     name: 'Shilpa',
     role: 'Content Specialist',
@@ -47,6 +38,17 @@ const teamMembers = [
       instagram: 'https://twitter.com/shilpa',
       linkedin: 'https://linkedin.com/in/shilpa',
       github: 'https://github.com/shilpa'
+    }
+  },
+  {
+    name: 'Akhilesh',
+    role: 'AI Specialist',
+    bio: 'AI expert focused on integrating advanced technologies to enhance user interaction.',
+    image: '/akhilesh.jpeg',
+    social: {
+      instagram: 'https://twitter.com/akhilesh',
+      linkedin: 'https://linkedin.com/in/akhilesh',
+      github: 'https://github.com/akhilesh'
     }
   }
   
