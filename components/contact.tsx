@@ -8,23 +8,46 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
+import Swal from 'sweetalert2'
 
 export default function InteractiveContactUsComponent() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { toast } = useToast()
+  
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true)
-    // Simulating form submission
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    // Create form data with Web3Forms key
+    const formData = new FormData()
+    formData.append("access_key", "6e5d7c0f-556a-4fe6-ba6a-c974c3c6230f")
+    formData.append("name", data.name)
+    formData.append("email", data.email)
+    formData.append("message", data.message)
+
+    try {
+      // Submit to Web3Forms
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      })
+      
+      const result = await response.json()
+
+      if (result.success) {
+        Swal.fire({
+          title: "Thank You",
+          text: "🧠😊We will contact you soon....😊🫀 ",
+          icon: "success"
+        });
+        reset() // Reset the form on success
+      } 
+    } catch (error) {
+      console.error("Error submitting form:", error)
+      Swal.showValidationMessage('<i class="fa fa-info-circle"></i> Your name is required')
+    }
+
     setIsSubmitting(false)
-    reset()
-    toast({
-      title: "Message Sent",
-      description: "Thank you for reaching out! We'll get back to you soon.",
-      duration: 5000,
-    })
   }
 
   return (
@@ -68,8 +91,8 @@ export default function InteractiveContactUsComponent() {
                     </motion.p>
                   )}
                 </AnimatePresence>
-
               </motion.div>
+              
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -98,8 +121,8 @@ export default function InteractiveContactUsComponent() {
                     </motion.p>
                   )}
                 </AnimatePresence>
-
               </motion.div>
+              
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -123,12 +146,9 @@ export default function InteractiveContactUsComponent() {
                     </motion.p>
                   )}
                 </AnimatePresence>
-
               </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
+              
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
@@ -149,6 +169,7 @@ export default function InteractiveContactUsComponent() {
               </motion.div>
             </form>
           </div>
+          {/* Additional information and links */}
           <div className="space-y-6">
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -156,7 +177,7 @@ export default function InteractiveContactUsComponent() {
               transition={{ delay: 0.6 }}
               className="text-gray-600 text-lg"
             >
-              Your voice matters to us. Reach out anytime—we&apos;re here to help.
+              Your voice matters to us. Reach out anytime—we're here to help.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -167,7 +188,7 @@ export default function InteractiveContactUsComponent() {
               <h2 className="text-2xl font-semibold text-gray-800">Connect with us</h2>
               <div className="flex space-x-4">
                 <motion.a
-                  href="https://instagram.com"
+                  href="https://instagram.com/arpan_kumar_saini"
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.2, rotate: 5 }}
@@ -187,7 +208,7 @@ export default function InteractiveContactUsComponent() {
                   <Twitter size={28} />
                 </motion.a>
                 <motion.a
-                  href="mailto:support@mentalhealth.com"
+                  href="mailto:work.arpansaini@gmail.com"
                   whileHover={{ scale: 1.2, y: -2 }}
                   whileTap={{ scale: 0.9 }}
                   className="text-gray-600 hover:text-red-500 transition"
@@ -201,12 +222,8 @@ export default function InteractiveContactUsComponent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
             >
-              <h2 className="text-2xl font-semibold text-gray-800 mb-2">Our Location</h2>
-              <p className="text-gray-600">
-                123 Wellness Street<br />
-                Mindful City, MC 12345<br />
-                United States
-              </p>
+              <p className="text-gray-600">work.heartfulmind@gmail.com</p>
+              <p className="text-gray-600">+91 9528829470</p>
             </motion.div>
           </div>
         </div>
