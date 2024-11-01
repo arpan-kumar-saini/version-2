@@ -1,21 +1,26 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, SubmitHandler } from "react-hook-form"
 import { motion, AnimatePresence } from "framer-motion"
 import { Instagram, Twitter, Mail, Send } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
 import Swal from 'sweetalert2'
 
+// Define the interface for form data
+interface FormData {
+  name: string
+  email: string
+  message: string
+}
+
 export default function InteractiveContactUsComponent() {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm()
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>()
   const [isSubmitting, setIsSubmitting] = useState(false)
   
-
-  const onSubmit = async (data: any) => {
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     setIsSubmitting(true)
     
     // Create form data with Web3Forms key
@@ -37,7 +42,7 @@ export default function InteractiveContactUsComponent() {
       if (result.success) {
         Swal.fire({
           title: "Thank You",
-          text: "🧠😊We will contact you soon....😊🫀 ",
+          text: "🧠😊We will contact you soon....😊🫀",
           icon: "success"
         });
         reset() // Reset the form on success
@@ -177,7 +182,7 @@ export default function InteractiveContactUsComponent() {
               transition={{ delay: 0.6 }}
               className="text-gray-600 text-lg"
             >
-              Your voice matters to us. Reach out anytime—we're here to help.
+              Your voice matters to us. Reach out anytime—we&apos;re here to help.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -223,7 +228,7 @@ export default function InteractiveContactUsComponent() {
               transition={{ delay: 0.8 }}
             >
               <p className="text-gray-600">work.heartfulmind@gmail.com</p>
-              <p className="text-gray-600">+91 9528829470</p>
+              <p className="text-gray-600">+1 (555) 012-3456</p>
             </motion.div>
           </div>
         </div>
