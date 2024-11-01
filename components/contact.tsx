@@ -228,7 +228,7 @@ export default function InteractiveContactUsComponent() {
               transition={{ delay: 0.8 }}
             >
               <p className="text-gray-600">work.heartfulmind@gmail.com</p>
-              <p className="text-gray-600">+1 (555) 012-3456</p>
+              <p className="text-gray-600">+91 9528829470</p>
             </motion.div>
           </div>
         </div>
