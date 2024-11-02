@@ -11,6 +11,10 @@ body {
     text-wrap: balance;
   }
 }
+/* styles/globals.css */
+html {
+  scroll-behavior: smooth;
+}
 
 @layer base {
   :root {

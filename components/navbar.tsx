@@ -26,8 +26,9 @@ const navItems = [
   { name: 'Home', href: '/' },
   { name: 'Chatbot', href: '/chatbot' },
   { name: 'Docs', href: '/docs' },
-  { name: 'Our Team', href: '/team' },
-  { name: 'Contact Us', href: '/contact' },
+  { name: 'Our Research', href: '/research' },
+  { name: 'Our Team', href: '#team' },
+  { name: 'Contact Us', href: '#contact' },
 ]
 
 export  default function NavbarComponent() {

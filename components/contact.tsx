@@ -56,7 +56,7 @@ export default function InteractiveContactUsComponent() {
   }
 
   return (
-    <div className="h-[700px] flex items-center justify-center p-4">
+    <div className="h-[700px] flex items-center justify-center p-4" id="contact">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
