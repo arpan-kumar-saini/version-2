@@ -8,7 +8,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  
 } from "@/components/ui/dropdown-menu"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
@@ -38,7 +37,6 @@ import {
   Loader2,
   Settings,
   LogOut,
-
 } from "lucide-react"
 import Link from "next/link"
 
@@ -46,6 +44,8 @@ type Message = {
   role: 'user' | 'assistant'
   content: string
 }
+const gemApiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+const urlApi =`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${gemApiKey}`;
 
 type User = {
   name: string
@@ -61,14 +61,6 @@ const sampleChat: Message[] = [
   {
     role: 'assistant',
     content: "Hello! I'm your Mental Health Support assistant. How are you feeling today?"
-  },
-  {
-    role: 'user',
-    content: "I've been feeling a bit overwhelmed lately with work and personal life."
-  },
-  {
-    role: 'assistant',
-    content: "I'm sorry to hear that you're feeling overwhelmed. It's a common experience, especially when balancing work and personal life. Let's explore some strategies that might help you manage these feelings. Would you like to start with some quick stress-relief techniques or discuss ways to improve your work-life balance?"
   }
 ]
 
@@ -76,7 +68,6 @@ export default function MentalHealthChatComponent() {
   const [message, setMessage] = useState('')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [selectedModel, setSelectedModel] = useState('Mental Health Support v1.0')
-  const [isTyping, setIsTyping] = useState(false)
   const [messages, setMessages] = useState<Message[]>(sampleChat)
   const [isProcessing, setIsProcessing] = useState(false)
   const [user, setUser] = useState<User | null>(null)
@@ -86,34 +77,68 @@ export default function MentalHealthChatComponent() {
 
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = 0
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
     }
   }, [messages])
 
-  const handleSendMessage = async () => {
-    if (message.trim() === '') return
+  const generateResponse = async (userMessage: string) => {
+    try {
+      const response = await fetch(
+        urlApi,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `As a mental health support chatbot, respond to: ${userMessage}`
+              }]
+            }]
+          })
+        }
+      );
 
-    const newUserMessage: Message = { role: 'user', content: message }
-    setMessages(prevMessages => [newUserMessage, ...prevMessages])
-    setMessage('')
-    setIsProcessing(true)
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-
-    const newAssistantMessage: Message = {
-      role: 'assistant',
-      content: `I understand that you're feeling ${message.toLowerCase()}. It's important to acknowledge these feelings. Let's explore some strategies that might help you cope with this. Would you like to try some relaxation techniques or discuss ways to address the root causes of these feelings?`
+      const data = await response.json();
+      return data.candidates[0].content.parts[0].text;
+    } catch (error) {
+      console.error("Error:", error);
+      return "I apologize, but I'm having trouble processing your request. Please try again.";
     }
-    setMessages(prevMessages => [newAssistantMessage, ...prevMessages])
-    setIsProcessing(false)
+  }
+
+  const handleSendMessage = async () => {
+    if (message.trim() === "") return;
+
+    const userMessage: Message = { 
+      role: "user" as const, 
+      content: message 
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    setMessage("");
+    setIsProcessing(true);
+
+    const aiResponse = await generateResponse(message);
+    const assistantMessage: Message = { 
+      role: "assistant" as const, 
+      content: aiResponse 
+    };
+    
+    setMessages(prev => [...prev, assistantMessage]);
+    setIsProcessing(false);
   }
 
   const handleLogin = (name: string, email: string) => {
     setUser({
       name,
       email,
-       avatar: name[0].toUpperCase(),
+      avatar: name[0].toUpperCase(),
       preferences: {
         darkMode: false,
         notifications: true
@@ -150,7 +175,7 @@ export default function MentalHealthChatComponent() {
   }
 
   return (
-    <div className={`grid md:grid-cols-[260px_1fr] min-h-screen w-full ${user?.preferences.darkMode ? ' text-white' : 'bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 text-gray-800'}`}>
+    <div className={`grid md:grid-cols-[260px_1fr] min-h-screen w-full ${user?.preferences.darkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 text-gray-800'}`}>
       {/* Sidebar */}
       <div className={`flex-col gap-2 border-r border-gray-300 ${isSidebarOpen ? 'flex' : 'hidden md:flex'}`}>
         {user ? (
@@ -165,19 +190,17 @@ export default function MentalHealthChatComponent() {
               </div>
             </div>
             <Button variant="outline" className="w-full mb-2" onClick={() => setIsProfileOpen(true)}>
-              <Settings className="w-4 h-4 mr-2 bg-gradient-to-br from-green-50 rounded-ld via-blue-50  to-purple-50" />
+              <Settings className="w-4 h-4 mr-2" />
               Settings
             </Button>
             <Button variant="outline" className="w-full" onClick={handleLogout}>
-              <LogOut className="w-4 h-4 mr-2 bg-gradient-to-br from-green-50 rounded-ld via-blue-50  to-purple-50" />
+              <LogOut className="w-4 h-4 mr-2" />
               Log out
             </Button>
           </div>
         ) : (
-          <div className="p-4 border-b border-gray-300 bg-gradient-to-br from-green-50 rounded-ld via-blue-50  to-purple-50">
-            <Dialog >
-              
-              
+          <div className="p-4 border-b border-gray-300">
+            <Dialog>
               <DialogTrigger asChild>
                 <Button variant="outline" className="w-full">Log in</Button>
               </DialogTrigger>
@@ -191,17 +214,13 @@ export default function MentalHealthChatComponent() {
                   const formData = new FormData(e.currentTarget)
                   handleLogin(formData.get('name') as string, formData.get('email') as string)
                 }}>
-                  <div className="grid gap-4 py-4 bg-gradient-to-br from-green-50 rounded-ld via-blue-50  to-purple-50">
-                    <div className="grid grid-cols-4 items-center gap-4 bg-gradient-to-br from-green-50 rounded-ld via-blue-50  to-purple-50">
-                      <Label htmlFor="name" className="text-right">
-                        Name
-                      </Label>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="name" className="text-right">Name</Label>
                       <Input id="name" name="name" className="col-span-3" />
                     </div>
-                    <div className="grid grid-cols-4 items-center gap-4 bg-gradient-to-br from-green-50 rounded-ld via-blue-50  to-purple-50">
-                      <Label htmlFor="email" className="text-right">
-                        Email
-                      </Label>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="email" className="text-right">Email</Label>
                       <Input id="email" name="email" type="email" className="col-span-3" />
                     </div>
                   </div>
@@ -210,10 +229,10 @@ export default function MentalHealthChatComponent() {
                   </div>
                 </form>
               </DialogContent>
-              
             </Dialog>
           </div>
         )}
+
         <div className="sticky top-0 p-2">
           <Button variant="ghost" className="justify-start w-full gap-2 px-2 text-left">
             <div className="flex items-center justify-center rounded-full w-7 h-7 bg-gradient-to-r from-green-400 to-blue-500">
@@ -223,179 +242,139 @@ export default function MentalHealthChatComponent() {
             <PenBox className="w-4 h-4" />
           </Button>
         </div>
+
         <div className="flex-1 overflow-auto">
           <div className="grid gap-1 p-2">
-            <div className="px-2 text-xs font-medium text-gray-600 dark:text-gray-400">Today</div>
-            <Link
-              href="#"
-              className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-white/20"
-            >
-              Coping with Stress and Anxiety
-            </Link>
-            <Link
-              href="#"
-              className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-white/20"
-            >
-              Mindfulness Techniques for Mental Health
-            </Link>
-          </div>
-          <div className="grid gap-1 p-2">
-            <div className="px-2 text-xs font-medium text-gray-600 dark:text-gray-400">Yesterday</div>
-            <Link
-              href="#"
-              className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-white/20"
-            >
-              Building Resilience in Difficult Times
-            </Link>
-            <Link
-              href="#"
-              className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-white/20"
-            >
-              Self-Care Strategies for Mental Wellness
-            </Link>
+            <div className="px-2 text-xs font-medium text-gray-600">Previous Chats</div>
+            {['Coping with Stress', 'Anxiety Management', 'Depression Support'].map((chat, index) => (
+              <Link
+                key={index}
+                href="#"
+                className="flex-1 block p-2 overflow-hidden text-sm truncate transition-colors rounded-md whitespace-nowrap hover:bg-white/20"
+              >
+                {chat}
+              </Link>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="flex flex-col h-screen">
-        <div className="sticky top-0 p-2 border-b border-gray-300 bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:bg-gray-800 z-10">
+        <div className="sticky top-0 p-2 border-b border-gray-300 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
           <Button variant="ghost" className="md:hidden" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             {isSidebarOpen ? <X className="w-5 h-5" /> : <History className="w-5 h-5" />}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="gap-1 rounded-xl px-3 h-10 text-lg bg-gradient-to-br from-green-100 via-blue-100  to-purple-100">
+              <Button variant="ghost" className="gap-1">
                 {selectedModel}
-                <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                <ChevronDown className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[300px] bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700">
-              <DropdownMenuItem onClick={() => setSelectedModel('Emotional Wellbeing v1.2')} className="focus:bg-gradient-to-br from-green-100 via-blue-100 to-purple-100 dark:focus:bg-gray-700">
+            <DropdownMenuContent align="start" className="w-[300px]">
+              <DropdownMenuItem onClick={() => setSelectedModel('Emotional Wellbeing v1.2')}>
                 <Sparkles className="w-4 h-4 mr-2" />
                 <div>
                   <div className="font-medium">Emotional Wellbeing</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Comprehensive support for your mental health</div>
+                  <div className="text-sm text-gray-500">Comprehensive support for your mental health</div>
                 </div>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setSelectedModel('Stress Management v1.1')} className="focus:bg-gradient-to-br from-green-100 via-blue-100  to-purple-100 dark:focus:bg-gray-700">
+              <DropdownMenuItem onClick={() => setSelectedModel('Stress Management v1.1')}>
                 <Zap className="w-4 h-4 mr-2" />
                 <div>
                   <div className="font-medium">Stress Management</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Coping strategies for everyday challenges</div>
+                  <div className="text-sm text-gray-500">Coping strategies for everyday challenges</div>
                 </div>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div 
-          ref={chatContainerRef}
-          className="flex flex-col-reverse flex-1 pb-72 w-full mx-auto p-4 overflow-y-auto"
-          style={{
-            scrollbarWidth: 'thin',
-            scrollbarColor: '#CBD5E0 #EDF2F7',
-          }}
-        >
-          {isProcessing && (
-            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-4">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Processing your message...
-            </div>
-          )}
+
+        <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4">
           {messages.map((msg, index) => (
-            <div key={index} className="flex items-start gap-4 w-full mb-8">
-              <Avatar className="w-6 h-6 border border-gray-300 dark:border-gray-700">
+            <div key={index} className="flex items-start gap-4 mb-4">
+              <Avatar className="w-8 h-8">
                 <AvatarFallback>{msg.role === 'user' ? (user?.avatar || 'U') : 'AI'}</AvatarFallback>
               </Avatar>
-              <div className="grid gap-1 flex-1">
-                <div className="font-semibold">{msg.role === 'user' ? (user?.name || 'You') : 'Mental Health Support'}</div>
-                <div className="text-sm text-gray-700 dark:text-gray-300">
-                  {msg.content}
-                </div>
+              <div className="flex-1">
+                <div className="font-medium mb-1">{msg.role === 'user' ? (user?.name || 'You') : 'Mental Health Support'}</div>
+                <div className="prose dark:prose-invert">{msg.content}</div>
                 {msg.role === 'assistant' && (
-                  <div className="flex items-center gap-2 mt-2">
-                    <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
-                      <Clipboard className="w-4 h-4" />
-                      <span className="sr-only">Copy</span>
+                  <div className="flex gap-2 mt-2">
+                    <Button variant="ghost" size="sm">
+                      <ThumbsUp className="w-4 h-4 mr-1" /> Helpful
                     </Button>
-                    <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
-                      <ThumbsUp className="w-4 h-4" />
-                      <span className="sr-only">Helpful</span>
-                    </Button>
-                    <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
-                      <ThumbsDown className="w-4 h-4" />
-                      <span className="sr-only">Not helpful</span>
-                    </Button>
-                    <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
-                      <RefreshCcw className="w-4 h-4" />
-                      <span className="sr-only">Regenerate response</span>
+                    <Button variant="ghost" size="sm">
+                      <ThumbsDown className="w-4 h-4 mr-1" /> Not helpful
                     </Button>
                   </div>
                 )}
               </div>
             </div>
           ))}
+          {isProcessing && (
+            <div className="flex items-center gap-2 text-gray-500">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Processing...
+            </div>
+          )}
         </div>
-        <div className="sticky bottom-0  w-full mx-auto p-4 bg-gradient-to-br from-green-50 rounded-ld via-blue-50  to-purple-50  dark:bg-gray-800 border-t border-gray-300 dark:border-gray-700">
-          <div className="relative">
-            <Textarea
-              placeholder="Type your message..."
-              value={message}
-              onChange={(e) => {
-                setMessage(e.target.value)
-                setIsTyping(e.target.value.length > 0)
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault()
-                  handleSendMessage()
-                }
-              }}
-              className={`min-h-[80px] w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-2xl resize-none p-4 pr-12 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 transition-all ${isTyping ? 'border-blue-500 shadow-lg' : ''}`}
-            />
-            <Button 
-              type="submit" 
-              size="icon" 
-              className="absolute w-8 h-8 rounded-full top-3 right-3 bg-gradient-to-r from-green-400 to-blue-500"
-              onClick={handleSendMessage}
-              disabled={isProcessing}
-            >
-              {isProcessing ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
+
+        <div className="sticky bottom-0 p-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-t border-gray-200">
+          <div className="max-w-3xl mx-auto">
+            <div className="relative">
+              <Textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    handleSendMessage()
+                  }
+                }}
+                placeholder="Type your message..."
+                className="pr-12 resize-none"
+                rows={3}
+              />
+              <Button
+                size="icon"
+                className="absolute right-2 bottom-2"
+                onClick={handleSendMessage}
+                disabled={isProcessing || !message.trim()}
+              >
                 <ArrowUp className="w-4 h-4" />
-              )}
-              <span className="sr-only">Send</span>
-            </Button>
+              </Button>
+            </div>
+            <p className="text-xs text-center text-gray-500 mt-2">
+              This is an AI assistant. Please verify any important information.
+            </p>
           </div>
-          <p className="mt-2 text-xs text-center text-gray-600 dark:text-gray-400">
-            This is an AI assistant. Consider checking important information.
-          </p>
         </div>
       </div>
 
-      {/* Profile Settings Dialog */}
+      {/* Settings Dialog */}
       <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Profile Settings</DialogTitle>
-            <DialogDescription>Manage your profile and preferences.</DialogDescription>
+            <DialogTitle>Settings</DialogTitle>
+            <DialogDescription>Manage your preferences</DialogDescription>
           </DialogHeader>
           {user && (
-            <div className="grid gap-4 py-4 ">
+            <div className="grid gap-4 py-4">
               <div className="flex items-center gap-4">
                 <Avatar className="w-16 h-16">
                   <AvatarFallback>{user.avatar}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="font-semibold">{user.name}</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+                  <h3 className="font-medium">{user.name}</h3>
+                  <p className="text-sm text-gray-500">{user.email}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <Label htmlFor="dark-mode">Dark Mode</Label>
+                <Label htmlFor="darkMode">Dark Mode</Label>
                 <Switch
-                  id="dark-mode"
+                  id="darkMode"
                   checked={user.preferences.darkMode}
                   onCheckedChange={toggleDarkMode}
                 />
